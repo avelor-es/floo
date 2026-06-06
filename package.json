@@ -1,0 +1,45 @@
+{
+  "name": "@avelor/floo",
+  "version": "0.1.0",
+  "description": "Deploy from anywhere. Name your destination, step through.",
+  "bin": {
+    "floo": "bin/floo.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node bin/floo.js",
+    "test": "node --test test/tokens.test.js test/config.test.js test/agent.test.js test/cli.test.js",
+    "prepublishOnly": "node --test test/tokens.test.js test/config.test.js test/agent.test.js test/cli.test.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "author": "Avelor <cruz@avelor.es>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "deploy",
+    "cd",
+    "ci",
+    "ssh",
+    "server",
+    "developer-tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avelor-es/floo.git"
+  },
+  "homepage": "https://github.com/avelor-es/floo#readme",
+  "bugs": {
+    "url": "https://github.com/avelor-es/floo/issues"
+  }
+}

@@ -1,0 +1,15 @@
+node_modules/
+
+*.log
+floo.pid
+floo.log
+
+.config/
+
+.DS_Store
+.env
+.env.*
+*.swp
+*.swo
+.idea/
+.vscode/

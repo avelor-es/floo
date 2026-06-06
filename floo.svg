@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+<defs>
+
+  <linearGradient id="parchment" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%"   stop-color="#F9F1D8"/>
+    <stop offset="100%" stop-color="#EDE3BE"/>
+  </linearGradient>
+
+  <radialGradient id="embers" cx="50%" cy="100%" r="55%">
+    <stop offset="0%"   stop-color="#FF5500" stop-opacity="0.75"/>
+    <stop offset="100%" stop-color="#FF3000" stop-opacity="0"/>
+  </radialGradient>
+
+  <radialGradient id="flameGlow" cx="50%" cy="90%" r="60%">
+    <stop offset="0%"   stop-color="#00FF44" stop-opacity="0.12"/>
+    <stop offset="100%" stop-color="#00CC33" stop-opacity="0"/>
+  </radialGradient>
+
+  <clipPath id="archClip">
+    <path d="M287,388 L287,212 Q400,153 513,212 L513,388 Z"/>
+  </clipPath>
+
+  <style>
+    .flame-outer-l {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: flicker-outer 3.2s ease-in-out infinite alternate;
+    }
+    .flame-outer-r {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: flicker-outer 3.2s ease-in-out infinite alternate;
+      animation-delay: -1.6s;
+    }
+    .flame-mid-l {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: flicker-mid 2.4s ease-in-out infinite alternate;
+    }
+    .flame-mid-r {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: flicker-mid 2.4s ease-in-out infinite alternate;
+      animation-delay: -1.2s;
+    }
+    .flame-central {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: flicker-central 1.9s ease-in-out infinite alternate;
+    }
+    .flame-inner {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: flicker-inner 1.3s ease-in-out infinite alternate;
+    }
+    .flame-tip {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: flicker-tip 0.85s ease-in-out infinite alternate;
+    }
+    .flame-aura {
+      animation: aura-pulse 2.8s ease-in-out infinite alternate;
+    }
+    .ember-glow {
+      animation: ember-pulse 2.1s ease-in-out infinite alternate;
+    }
+    .spark {
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
+      animation: spark-rise 3s ease-out infinite;
+    }
+
+    @keyframes flicker-outer {
+      0%   { transform: scaleX(1)    scaleY(1);    opacity: 0.85; }
+      40%  { transform: scaleX(1.05) scaleY(0.96); opacity: 0.75; }
+      100% { transform: scaleX(0.95) scaleY(1.05); opacity: 0.92; }
+    }
+    @keyframes flicker-mid {
+      0%   { transform: scaleX(1)    scaleY(1);    opacity: 0.95; }
+      50%  { transform: scaleX(1.04) scaleY(1.05); opacity: 1; }
+      100% { transform: scaleX(0.96) scaleY(0.95); opacity: 0.86; }
+    }
+    @keyframes flicker-central {
+      0%   { transform: scaleX(1)    scaleY(1);    opacity: 0.97; }
+      35%  { transform: scaleX(0.94) scaleY(1.06); opacity: 1; }
+      100% { transform: scaleX(1.06) scaleY(0.94); opacity: 0.88; }
+    }
+    @keyframes flicker-inner {
+      0%   { transform: scaleX(1)    scaleY(1);    opacity: 0.92; }
+      55%  { transform: scaleX(1.09) scaleY(1.07); opacity: 1; }
+      100% { transform: scaleX(0.91) scaleY(0.93); opacity: 0.82; }
+    }
+    @keyframes flicker-tip {
+      0%   { transform: scaleX(1)   scaleY(1)   translateY(0);    opacity: 0.88; }
+      50%  { transform: scaleX(1.1) scaleY(0.9) translateY(-4px); opacity: 1; }
+      100% { transform: scaleX(0.9) scaleY(1.1) translateY(4px);  opacity: 0.7; }
+    }
+    @keyframes aura-pulse {
+      0%   { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    @keyframes ember-pulse {
+      0%   { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    @keyframes spark-rise {
+      0%   { transform: translateY(0px)   translateX(0px);  opacity: 0; }
+      8%   { opacity: 1; }
+      70%  { opacity: 0.7; }
+      100% { transform: translateY(-60px) translateX(4px);  opacity: 0; }
+    }
+  </style>
+
+</defs>
+
+<!-- ─── BACKGROUND ─── -->
+<rect width="800" height="500" fill="url(#parchment)"/>
+
+<!-- Subtle aging streaks -->
+<line x1="180" y1="0"   x2="160" y2="480" stroke="#C8B880" stroke-width="0.4" opacity="0.3"/>
+<line x1="520" y1="0"   x2="540" y2="480" stroke="#C8B880" stroke-width="0.3" opacity="0.25"/>
+<line x1="680" y1="0"   x2="700" y2="480" stroke="#C8B880" stroke-width="0.3" opacity="0.2"/>
+
+<!-- ─── OUTER BORDER (thick) ─── -->
+<rect x="14" y="14" width="772" height="472" fill="none" stroke="#1C0F0A" stroke-width="2.8"/>
+<!-- Inner border (thin) -->
+<rect x="23" y="23" width="754" height="454" fill="none" stroke="#1C0F0A" stroke-width="0.9"/>
+
+<!-- ─── CORNER ORNAMENTS ─── -->
+<!-- Top-left -->
+<polyline points="14,55 14,14 55,14"       fill="none" stroke="#1C0F0A" stroke-width="2.2"/>
+<polygon  points="14,14 27,21 21,27"       fill="#1C0F0A"/>
+<circle cx="39" cy="14" r="2"              fill="#1C0F0A" opacity="0.55"/>
+<circle cx="14" cy="39" r="2"              fill="#1C0F0A" opacity="0.55"/>
+<!-- Top-right -->
+<polyline points="786,55 786,14 745,14"    fill="none" stroke="#1C0F0A" stroke-width="2.2"/>
+<polygon  points="786,14 773,21 779,27"    fill="#1C0F0A"/>
+<circle cx="761" cy="14" r="2"             fill="#1C0F0A" opacity="0.55"/>
+<circle cx="786" cy="39" r="2"             fill="#1C0F0A" opacity="0.55"/>
+<!-- Bottom-left -->
+<polyline points="14,445 14,486 55,486"    fill="none" stroke="#1C0F0A" stroke-width="2.2"/>
+<polygon  points="14,486 27,479 21,473"    fill="#1C0F0A"/>
+<circle cx="39" cy="486" r="2"             fill="#1C0F0A" opacity="0.55"/>
+<circle cx="14" cy="461" r="2"             fill="#1C0F0A" opacity="0.55"/>
+<!-- Bottom-right -->
+<polyline points="786,445 786,486 745,486" fill="none" stroke="#1C0F0A" stroke-width="2.2"/>
+<polygon  points="786,486 773,479 779,473" fill="#1C0F0A"/>
+<circle cx="761" cy="486" r="2"            fill="#1C0F0A" opacity="0.55"/>
+<circle cx="786" cy="461" r="2"            fill="#1C0F0A" opacity="0.55"/>
+
+<!-- ─── TOP DECORATIVE RULE ─── -->
+<line x1="42" y1="36" x2="370" y2="36" stroke="#1C0F0A" stroke-width="1"/>
+<polygon points="400,25 413,36 400,47 387,36" fill="#1C0F0A"/>
+<line x1="430" y1="36" x2="758" y2="36" stroke="#1C0F0A" stroke-width="1"/>
+<polygon points="185,32 189,36 185,40 181,36" fill="#1C0F0A" opacity="0.5"/>
+<polygon points="615,32 619,36 615,40 611,36" fill="#1C0F0A" opacity="0.5"/>
+
+<!-- ─── TITLE ─── -->
+<text x="400" y="108"
+  font-family="Georgia, 'Times New Roman', serif"
+  font-size="70"
+  font-weight="normal"
+  fill="#1C0F0A"
+  text-anchor="middle"
+  letter-spacing="12">floo</text>
+
+<!-- Subtitle -->
+<text x="400" y="133"
+  font-family="Georgia, 'Times New Roman', serif"
+  font-size="13"
+  font-style="italic"
+  fill="#5C4020"
+  text-anchor="middle">Deploy from anywhere. Name your destination, step through.</text>
+
+<!-- Rule under title -->
+<line x1="115" y1="143" x2="680" y2="143" stroke="#1C0F0A" stroke-width="0.8"/>
+<circle cx="400" cy="143" r="2.5" fill="#1C0F0A"/>
+<circle cx="210" cy="143" r="1.5" fill="#1C0F0A" opacity="0.65"/>
+<circle cx="590" cy="143" r="1.5" fill="#1C0F0A" opacity="0.65"/>
+
+<!-- ─── FIREPLACE ─── -->
+
+<!-- MANTEL BEAM -->
+<rect x="212" y="158" width="376" height="26" fill="#6B5040" stroke="#1C0F0A" stroke-width="1.5"/>
+<line x1="222" y1="163" x2="578" y2="163" stroke="#3A1E0A" stroke-width="0.5" opacity="0.5"/>
+<line x1="220" y1="168" x2="576" y2="168" stroke="#3A1E0A" stroke-width="0.5" opacity="0.4"/>
+<line x1="223" y1="173" x2="579" y2="173" stroke="#3A1E0A" stroke-width="0.5" opacity="0.5"/>
+<line x1="219" y1="178" x2="575" y2="178" stroke="#3A1E0A" stroke-width="0.5" opacity="0.35"/>
+<line x1="212" y1="181" x2="588" y2="181" stroke="#1C0F0A" stroke-width="0.7"/>
+
+<!-- LEFT JAMB -->
+<rect x="212" y="184" width="75" height="206" fill="#A89878" stroke="#1C0F0A" stroke-width="1.3"/>
+<line x1="212" y1="210" x2="287" y2="210" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="212" y1="238" x2="287" y2="238" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="212" y1="268" x2="287" y2="268" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="212" y1="300" x2="287" y2="300" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="212" y1="330" x2="287" y2="330" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="212" y1="362" x2="287" y2="362" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="252" y1="184" x2="249" y2="390" stroke="#1C0F0A" stroke-width="0.5" opacity="0.3"/>
+
+<!-- RIGHT JAMB -->
+<rect x="513" y="184" width="75" height="206" fill="#A89878" stroke="#1C0F0A" stroke-width="1.3"/>
+<line x1="513" y1="215" x2="588" y2="215" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="513" y1="245" x2="588" y2="245" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="513" y1="275" x2="588" y2="275" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="513" y1="307" x2="588" y2="307" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="513" y1="337" x2="588" y2="337" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="513" y1="368" x2="588" y2="368" stroke="#1C0F0A" stroke-width="0.8"/>
+<line x1="551" y1="184" x2="549" y2="390" stroke="#1C0F0A" stroke-width="0.5" opacity="0.3"/>
+
+<!-- ARCH STONE BAND -->
+<path d="M267,390 L267,208 Q400,140 533,208 L533,390 L513,390 L513,212 Q400,153 287,212 L287,390 Z"
+  fill="#9A8868" stroke="#1C0F0A" stroke-width="1.2"/>
+
+<!-- Stone joint lines along the arch band -->
+<path d="M275,310 Q271,280 273,255" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<path d="M278,255 Q281,232 291,215" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<path d="M293,212 Q305,195 320,185" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<path d="M322,183 Q342,174 363,170" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<path d="M525,310 Q529,280 527,255" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<path d="M522,255 Q519,232 509,215" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<path d="M507,212 Q495,195 480,185" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<path d="M478,183 Q458,174 437,170" fill="none" stroke="#1C0F0A" stroke-width="0.8"/>
+<!-- Keystone at top center -->
+<path d="M367,169 L400,163 L433,169 L430,172 L400,166 L370,172 Z" fill="#5A4030" stroke="#1C0F0A" stroke-width="0.8"/>
+
+<!-- FIREPLACE INTERIOR - dark fill -->
+<path d="M287,388 L287,212 Q400,153 513,212 L513,388 Z" fill="#0A0705"/>
+
+<!-- Subtle crosshatch shadows inside arch -->
+<g clip-path="url(#archClip)" opacity="0.18">
+  <line x1="287" y1="340" x2="390" y2="195" stroke="#555" stroke-width="2.5"/>
+  <line x1="302" y1="388" x2="422" y2="195" stroke="#555" stroke-width="2.5"/>
+  <line x1="335" y1="388" x2="458" y2="200" stroke="#555" stroke-width="2.5"/>
+  <line x1="368" y1="388" x2="500" y2="215" stroke="#555" stroke-width="2.5"/>
+  <line x1="400" y1="388" x2="513" y2="258" stroke="#555" stroke-width="2.5"/>
+  <line x1="433" y1="388" x2="513" y2="328" stroke="#555" stroke-width="2.5"/>
+  <line x1="287" y1="300" x2="340" y2="200" stroke="#555" stroke-width="2.5"/>
+  <line x1="287" y1="260" x2="305" y2="200" stroke="#555" stroke-width="2.5"/>
+</g>
+
+<!-- ASH PILE -->
+<ellipse cx="400" cy="383" rx="92" ry="7"  fill="#1E1810" opacity="0.9"/>
+<path d="M322,382 Q362,376 400,377 Q438,376 478,382" stroke="#3A3028" stroke-width="2" fill="none" opacity="0.6"/>
+
+<!-- EMBER GLOW -->
+<ellipse class="ember-glow" cx="400" cy="382" rx="98" ry="16" fill="url(#embers)"/>
+
+<!-- ─── GREEN FLOO FLAMES ─── -->
+
+<!-- Flame aura -->
+<path class="flame-aura" d="M287,388 L287,212 Q400,153 513,212 L513,388 Z" fill="url(#flameGlow)"/>
+
+<!-- Outer back flames (deep forest green) -->
+<path class="flame-outer-l"
+  d="M332,385 C328,358 316,320 329,280 C340,252 358,234 351,208
+     C364,237 370,260 360,292 C351,320 350,355 346,385 Z"
+  fill="#004D1A" opacity="0.85"/>
+<path class="flame-outer-r"
+  d="M468,385 C472,358 484,320 471,280 C460,252 442,234 449,208
+     C436,237 430,260 440,292 C449,320 450,355 454,385 Z"
+  fill="#004D1A" opacity="0.85"/>
+
+<!-- Mid-layer flames (forest green) -->
+<path class="flame-mid-l"
+  d="M356,385 C351,348 342,306 357,268 C369,240 390,224 383,198
+     C394,228 403,250 394,282 C385,314 381,350 376,385 Z"
+  fill="#007A28" opacity="0.95"/>
+<path class="flame-mid-r"
+  d="M444,385 C449,348 458,306 443,268 C431,240 410,224 417,198
+     C406,228 397,250 406,282 C415,314 419,350 424,385 Z"
+  fill="#007A28" opacity="0.95"/>
+
+<!-- Central tall flame (bright green) -->
+<path class="flame-central"
+  d="M376,385 C372,346 365,302 378,263 C389,234 400,215 400,200
+     C400,215 411,234 422,263 C435,302 428,346 424,385 Z"
+  fill="#00A030" opacity="0.97"/>
+
+<!-- Inner bright flame -->
+<path class="flame-inner"
+  d="M388,385 C385,354 380,316 391,284 C397,263 400,250 400,236
+     C400,250 403,263 409,284 C420,316 415,354 412,385 Z"
+  fill="#00CC44" opacity="0.92"/>
+
+<!-- Bright tip -->
+<path class="flame-tip"
+  d="M396,236 C398,216 400,202 400,193
+     C400,202 402,216 404,236
+     C402,228 400,218 400,212
+     C400,218 398,228 396,236 Z"
+  fill="#AAFFAA" opacity="0.88"/>
+
+<!-- Floating sparks -->
+<circle class="spark" cx="368" cy="306" r="2.2" fill="#88FF88" opacity="0.82" style="animation-delay: 0s"/>
+<circle class="spark" cx="432" cy="295" r="1.8" fill="#88FF88" opacity="0.75" style="animation-delay: -0.7s"/>
+<circle class="spark" cx="386" cy="262" r="1.8" fill="#CCFFCC" opacity="0.85" style="animation-delay: -1.4s"/>
+<circle class="spark" cx="416" cy="268" r="2.2" fill="#88FF88" opacity="0.72" style="animation-delay: -2.1s"/>
+<circle class="spark" cx="352" cy="342" r="1.5" fill="#55DD55" opacity="0.65" style="animation-delay: -0.4s"/>
+<circle class="spark" cx="450" cy="330" r="1.5" fill="#55DD55" opacity="0.65" style="animation-delay: -1.1s"/>
+<circle class="spark" cx="400" cy="230" r="1.5" fill="#DDFFD0" opacity="0.75" style="animation-delay: -2.5s"/>
+<circle class="spark" cx="375" cy="240" r="1.2" fill="#AAFFAA" opacity="0.6"  style="animation-delay: -1.8s"/>
+<circle class="spark" cx="425" cy="245" r="1.2" fill="#AAFFAA" opacity="0.6"  style="animation-delay: -0.9s"/>
+
+<!-- HEARTH LEDGE -->
+<rect x="190" y="386" width="420" height="18" fill="#9A8868" stroke="#1C0F0A" stroke-width="1.3"/>
+<line x1="194" y1="395" x2="606" y2="395" stroke="#1C0F0A" stroke-width="0.5" opacity="0.4"/>
+
+<!-- ─── FOOTER ─── -->
+
+<!-- Rule above tagline -->
+<line x1="115" y1="430" x2="680" y2="430" stroke="#1C0F0A" stroke-width="0.8"/>
+<circle cx="400" cy="430" r="2.5"          fill="#1C0F0A"/>
+<circle cx="210" cy="430" r="1.5"          fill="#1C0F0A" opacity="0.65"/>
+<circle cx="590" cy="430" r="1.5"          fill="#1C0F0A" opacity="0.65"/>
+
+<!-- Tagline -->
+<text x="400" y="452"
+  font-family="Georgia, 'Times New Roman', serif"
+  font-size="13.5"
+  font-style="italic"
+  fill="#4A3520"
+  text-anchor="middle">"Throw the powder, speak the name — and you shall arrive."</text>
+
+<!-- Attribution -->
+<text x="400" y="470"
+  font-family="Georgia, 'Times New Roman', serif"
+  font-size="10"
+  fill="#7A6545"
+  text-anchor="middle"
+  letter-spacing="3.5">AVELOR  ·  @avelor/floo</text>
+
+</svg>
