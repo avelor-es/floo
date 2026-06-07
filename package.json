@@ -41,7 +41,7 @@
     "type": "git",
     "url": "git+https://github.com/avelor-es/floo.git"
   },
-  "homepage": "https://github.com/avelor-es/floo#readme",
+  "homepage": "https://floo.avelor.es",
   "bugs": {
     "url": "https://github.com/avelor-es/floo/issues"
   }
