@@ -4,6 +4,7 @@ const http   = require('http');
 const { spawn } = require('child_process');
 const tokens   = require('./tokens');
 const { findProject } = require('./projects');
+const history  = require('./history');
 const { info, G, W, GR, R, Z } = require('./fmt');
 
 const DEFAULT_PORT = 4001;
@@ -176,7 +177,9 @@ function serve(port, host) {
 
 async function runDeploy(project, config, res, isAborted) {
   const { cwd, steps = [], env: extraEnv = {} } = config;
-  const env = Object.assign({}, process.env, extraEnv);
+  const env     = Object.assign({}, process.env, extraEnv);
+  const id      = history.makeId();
+  const started = new Date().toISOString();
 
   sse(res, 'start', { project, steps: steps.length });
 
@@ -193,12 +196,14 @@ async function runDeploy(project, config, res, isAborted) {
     if (exitCode !== 0) {
       sse(res, 'done', { ok: false, step: i, cmd, code: exitCode });
       res.end();
+      history.append({ id, project, started, finished: new Date().toISOString(), ok: false, steps: steps.length, failed_step: { index: i, cmd, code: exitCode } });
       return;
     }
   }
 
   if (!isAborted()) {
     sse(res, 'done', { ok: true });
+    history.append({ id, project, started, finished: new Date().toISOString(), ok: true, steps: steps.length });
   }
   res.end();
 }

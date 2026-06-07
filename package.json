@@ -1,6 +1,6 @@
 {
   "name": "@avelor/floo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deploy from anywhere. Name your destination, step through.",
   "bin": {
     "floo": "bin/floo.js"
@@ -13,7 +13,10 @@
   "scripts": {
     "start": "node bin/floo.js",
     "test": "node --test test/tokens.test.js test/config.test.js test/agent.test.js test/cli.test.js",
-    "prepublishOnly": "node --test test/tokens.test.js test/config.test.js test/agent.test.js test/cli.test.js"
+    "prepublishOnly": "node --test test/tokens.test.js test/config.test.js test/agent.test.js test/cli.test.js",
+    "build:bundle": "npx @vercel/ncc build bin/floo.js -o dist/bundle --minify --quiet",
+    "build:sea": "node --experimental-sea-config sea-config.json && node scripts/sea.js",
+    "build": "pnpm run build:bundle && pnpm run build:sea"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

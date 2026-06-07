@@ -11,6 +11,7 @@ const TOKENS_FILE        = path.join(CONFIG_DIR, 'tokens.json');
 const PROJECTS_FILE      = process.env.FLOO_PROJECTS_FILE
   || path.join(CONFIG_DIR, 'projects.yml');
 const CLIENT_CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
+const DEPLOYS_FILE       = path.join(CONFIG_DIR, 'deploys.json');
 const PID_FILE           = path.join(CONFIG_DIR, 'floo.pid');
 const LOG_FILE           = path.join(CONFIG_DIR, 'floo.log');
 
@@ -23,6 +24,7 @@ module.exports = {
   TOKENS_FILE,
   PROJECTS_FILE,
   CLIENT_CONFIG_FILE,
+  DEPLOYS_FILE,
   PID_FILE,
   LOG_FILE,
   ensureDir,
