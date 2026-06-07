@@ -1,6 +1,6 @@
 {
   "name": "@avelor/floo",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Deploy from anywhere. Name your destination, step through.",
   "bin": {
     "floo": "bin/floo.js"
