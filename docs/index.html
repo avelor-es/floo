@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>floo — deploy from anywhere</title>
+  <meta name="description" content="Deploy from anywhere. Name your destination, step through.">
+  <meta property="og:title" content="floo">
+  <meta property="og:description" content="Deploy from anywhere. Name your destination, step through.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0c0b;
+      --bg-code:   #090807;
+      --text:      #ddd4c4;
+      --muted:     #6a5f55;
+      --accent:    #c07c28;
+      --accent-lo: #5c3a10;
+      --border:    #211d18;
+      --green:     #6d9e62;
+      --serif:     Georgia, 'Times New Roman', serif;
+      --sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono:      'Courier New', Courier, monospace;
+    }
+
+    ::selection { background: var(--accent-lo); color: #e8c07a; }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 110% 55% at 50% 0%, #1d1508 0%, transparent 60%),
+        radial-gradient(ellipse 60% 30% at 50% 100%, #110e09 0%, transparent 70%);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.9375rem;
+      line-height: 1.75;
+      padding: 0 1.5rem;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 5rem 0 5rem;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      padding-bottom: 2.75rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.75rem;
+    }
+
+    .logo {
+      width: 100%;
+      display: block;
+      margin: 0 auto 1.75rem;
+      border-radius: 5px;
+    }
+
+    .tagline {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.015em;
+    }
+
+    .gh-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      margin-top: 1.25rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+    .gh-link:hover { color: var(--accent); }
+    .gh-link svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
+
+    /* ── Sections ── */
+    section { margin-bottom: 2.75rem; }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--accent);
+      letter-spacing: 0.03em;
+      margin-bottom: 0.875rem;
+    }
+
+    p {
+      color: var(--text);
+      margin-bottom: 0.875rem;
+    }
+    p:last-child { margin-bottom: 0; }
+
+    em { font-style: italic; color: #c8b89a; }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: var(--accent-lo);
+      transition: text-decoration-color 0.15s;
+    }
+    a:hover { text-decoration-color: var(--accent); }
+
+    code {
+      font-family: var(--mono);
+      font-size: 0.83em;
+      color: #c8b078;
+      background: var(--bg-code);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Code blocks ── */
+    .block {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 0.875rem 0;
+    }
+
+    .block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 0.875rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .block-label {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: var(--muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .copy {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      letter-spacing: 0.05em;
+      padding: 0.18rem 0.55rem;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .copy:hover { color: var(--accent); border-color: var(--accent-lo); }
+    .copy.ok { color: var(--green); border-color: var(--green); }
+
+    pre {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      padding: 0.875rem 1rem;
+      overflow-x: auto;
+      color: #c8b078;
+      tab-size: 2;
+    }
+
+    .dim  { color: var(--muted); }
+    .hi   { color: var(--accent); }
+    .str  { color: #8aaa72; }
+    .txt  { color: var(--text); }
+    .ps   { color: var(--muted); user-select: none; }
+
+    /* ── Install pills ── */
+    .installs { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    /* ── Reference ── */
+    .ref-group { margin-bottom: 1.5rem; }
+
+    .ref-head {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0.2rem;
+    }
+
+    .ref-row {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 0.5rem;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7875rem;
+      align-items: baseline;
+    }
+    .ref-row:last-child { border-bottom: none; }
+
+    .ref-cmd { font-family: var(--mono); color: #c8b890; }
+    .ref-desc { color: var(--muted); font-size: 0.74rem; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.09em;
+    }
+
+    @media (max-width: 480px) {
+      .page { padding: 3rem 0; }
+      .logo { width: 200px; }
+      .ref-row { grid-template-columns: 1fr; gap: 0.05rem; }
+      .ref-desc { padding-bottom: 0.3rem; }
+    }
+  </style>
+</head>
+<body>
+<main class="page">
+
+  <header>
+    <img src="../floo.svg" alt="floo" class="logo">
+    <p class="tagline">Deploy from anywhere. Name your destination, step through.</p>
+    <a class="gh-link" href="https://github.com/avelor-es/floo" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      avelor-es/floo
+    </a>
+  </header>
+
+  <section>
+    <p>
+      In the wizarding world, the Floo Network connects thousands of fireplaces across Britain.
+      A witch or wizard steps into the flames, speaks the name of their destination, and arrives
+      moments later — no matter the distance.
+    </p>
+    <p>
+      Muggle servers present a similar predicament. You have a machine somewhere in the world
+      and need to deliver fresh code to it. <code>floo</code> solves this the wizarding way:
+      an <em>agent</em> runs on your server, waiting. You speak the project name from your machine
+      or CI pipeline, and the deploy happens. Logs stream back in real time.
+      No Docker. No Kubernetes. No monthly subscription to a platform that does too much.
+      Just a fireplace on each end.
+    </p>
+  </section>
+
+  <section>
+    <h2>Install</h2>
+    <div class="installs">
+
+      <div class="block">
+        <div class="block-head">
+          <span class="block-label">Homebrew</span>
+          <button class="copy" data-copy="brew install avelor-es/floo/floo">copy</button>
+        </div>
+        <pre><span class="ps">$ </span><span class="txt">brew install avelor-es/floo/floo</span></pre>
+      </div>
+
+      <div class="block">
+        <div class="block-head">
+          <span class="block-label">npm global</span>
+          <button class="copy" data-copy="npm install -g @avelor/floo">copy</button>
+        </div>
+        <pre><span class="ps">$ </span><span class="txt">npm install -g @avelor/floo</span></pre>
+      </div>
+
+      <div class="block">
+        <div class="block-head">
+          <span class="block-label">npx — no install needed</span>
+          <button class="copy" data-copy="npx @avelor/floo myapp">copy</button>
+        </div>
+        <pre><span class="ps">$ </span><span class="txt">npx @avelor/floo myapp</span></pre>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Quickstart</h2>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="block-label">server</span>
+        <button class="copy" data-copy="floo add project
+floo token issue --project myapp
+floo agent install">copy</button>
+      </div>
+      <pre><span class="ps">$ </span><span class="txt">floo add project</span>            <span class="dim"># interactive wizard</span>
+<span class="ps">$ </span><span class="txt">floo token issue </span><span class="hi">--project</span> <span class="str">myapp</span>
+<span class="ps">$ </span><span class="txt">floo agent install</span>          <span class="dim"># systemd service, starts on boot</span></pre>
+    </div>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="block-label">local or CI</span>
+        <button class="copy" data-copy="floo use myapp https://your-server:4001 fl_yourtoken
+floo myapp">copy</button>
+      </div>
+      <pre><span class="ps">$ </span><span class="txt">floo use </span><span class="str">myapp</span> <span class="str">https://your-server:4001</span> <span class="str">fl_yourtoken</span>
+<span class="ps">$ </span><span class="txt">floo myapp</span>                  <span class="dim"># logs stream in real time, exits 0 or 1</span></pre>
+    </div>
+
+  </section>
+
+  <section>
+    <h2>GitHub Actions</h2>
+    <p>
+      <a href="https://github.com/marketplace/actions/deploy-with-floo" target="_blank" rel="noopener">avelor-es/floo-action</a>
+      is available in the GitHub Marketplace. Add <code>FLOO_URL</code> and <code>FLOO_TOKEN</code> as repository secrets, then:
+    </p>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="block-label">.github/workflows/deploy.yml</span>
+        <button class="copy" data-copy="- uses: avelor-es/floo-action@v1
+  with:
+    project: myapp
+    url:     ${{ secrets.FLOO_URL }}
+    token:   ${{ secrets.FLOO_TOKEN }}">copy</button>
+      </div>
+      <pre><span class="hi">- uses:</span> <span class="str">avelor-es/floo-action@v1</span>
+  <span class="hi">with:</span>
+    <span class="hi">project:</span> <span class="str">myapp</span>
+    <span class="hi">url:</span>     <span class="dim">${{ secrets.FLOO_URL }}</span>
+    <span class="hi">token:</span>   <span class="dim">${{ secrets.FLOO_TOKEN }}</span></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reference</h2>
+
+    <div class="ref-group">
+      <div class="ref-head">Agent — run on the server</div>
+      <div class="ref-row"><span class="ref-cmd">floo agent [--port 4001]</span><span class="ref-desc">Start in foreground</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo agent --daemon</span><span class="ref-desc">Start as background daemon</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo agent install</span><span class="ref-desc">Install as systemd service</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo add project [name]</span><span class="ref-desc">Add a project interactively</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo token issue --project &lt;n&gt;</span><span class="ref-desc">Issue a scoped deploy token</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo token list</span><span class="ref-desc">List active tokens</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo token revoke &lt;id&gt;</span><span class="ref-desc">Revoke a token</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo logs [project]</span><span class="ref-desc">Recent deploy history</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo status</span><span class="ref-desc">Daemon status</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo stop</span><span class="ref-desc">Stop the daemon</span></div>
+    </div>
+
+    <div class="ref-group">
+      <div class="ref-head">Client — local or CI</div>
+      <div class="ref-row"><span class="ref-cmd">floo use &lt;project&gt; &lt;url&gt; &lt;token&gt;</span><span class="ref-desc">Configure a project</span></div>
+      <div class="ref-row"><span class="ref-cmd">floo &lt;project&gt;</span><span class="ref-desc">Deploy — streams logs, exits 0 or 1</span></div>
+    </div>
+
+    <div class="ref-group">
+      <div class="ref-head">CI — environment variables</div>
+      <div class="ref-row"><span class="ref-cmd">FLOO_TOKEN</span><span class="ref-desc">Token for this project</span></div>
+      <div class="ref-row"><span class="ref-cmd">FLOO_URL</span><span class="ref-desc">Agent URL</span></div>
+    </div>
+
+  </section>
+
+  <footer>Avelor &middot; floo</footer>
+
+</main>
+<script>
+  document.querySelectorAll('.copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(btn.dataset.copy).then(() => {
+        btn.textContent = 'copied';
+        btn.classList.add('ok');
+        setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('ok'); }, 1800);
+      });
+    });
+  });
+</script>
+</body>
+</html>
