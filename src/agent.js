@@ -177,7 +177,11 @@ function serve(port, host) {
 
 async function runDeploy(project, config, res, isAborted) {
   const { cwd, steps = [], env: extraEnv = {} } = config;
-  const env     = Object.assign({}, process.env, extraEnv);
+  const env     = Object.assign({}, process.env, {
+    GIT_CONFIG_COUNT: '1',
+    GIT_CONFIG_KEY_0: 'safe.directory',
+    GIT_CONFIG_VALUE_0: '*',
+  }, extraEnv);
   const id      = history.makeId();
   const started = new Date().toISOString();
 
