@@ -1,26 +1,30 @@
 #!/usr/bin/env node
 'use strict';
 
-const { fatal, ok, info, G, W, GR, Y, Z } = require('../src/fmt');
+const { fatal, ok, info, G, W, GR, Y, R, Z, col } = require('../src/fmt');
 const { setProject }   = require('../src/config');
 const tokens           = require('../src/tokens');
 const daemon           = require('../src/daemon');
 const { serve }        = require('../src/agent');
 const { deploy }       = require('../src/client');
-const { initFile, PROJECTS_FILE } = require('../src/projects');
+const { initFile, addProject, PROJECTS_FILE } = require('../src/projects');
 const { ensureDir }    = require('../src/paths');
+const history          = require('../src/history');
 
 const USAGE = `
 ${G}floo${Z} — deploy from anywhere
 
 ${G}agent${Z}  (run on the server)
   ${W}agent${Z} [--port 4001] [--host 0.0.0.0] [--daemon]   start the agent
+  ${W}agent install${Z} [--port 4001]                        install as systemd service
   ${W}stop${Z}                                               stop the daemon
   ${W}status${Z}                                             daemon status
   ${W}init${Z}                                               create projects.yml
+  ${W}add project${Z} [<name>]                               add a project interactively
   ${W}token issue${Z} --project <name>                       issue a project token
   ${W}token list${Z}                                         list tokens
-  ${W}token revoke${Z} <id>                                  revoke a token
+  ${W}token revoke${Z} <id>                                  revoke one
+  ${W}logs${Z} [<project>]                                   recent deploy history
 
 ${G}client${Z}  (run on your machine or CI)
   ${W}use${Z} <project> <url> <token>                        configure a project
@@ -44,6 +48,50 @@ function parseFlags(args) {
   return flags;
 }
 
+function formatDuration(ms) {
+  if (ms < 1000) return ms + 'ms';
+  const s = Math.round(ms / 1000);
+  if (s < 60) return s + 's';
+  return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+}
+
+function fmtDate(iso) {
+  return iso.replace('T', ' ').slice(0, 19);
+}
+
+function printLogs(entries) {
+  if (!entries.length) {
+    info('no deploy history found');
+    return;
+  }
+
+  const rows = [...entries].reverse().slice(0, 50);
+
+  process.stdout.write('\n');
+  process.stdout.write(
+    G + col('id', 10) + col('project', 22) + col('started', 21) + col('dur', 9) + 'result\n' +
+        '──────────  ─────────────────────  ───────────────────  ────────  ──────\n' + Z,
+  );
+
+  for (const e of rows) {
+    const dur = e.finished
+      ? formatDuration(new Date(e.finished) - new Date(e.started))
+      : '—';
+    const result = e.ok
+      ? GR + '✓' + Z
+      : R + '✗ step ' + (e.failed_step ? e.failed_step.index + 1 : '?') + Z;
+
+    process.stdout.write(
+      G + col(e.id, 10) + Z +
+      col(e.project, 22) +
+      G + col(fmtDate(e.started), 21) + Z +
+      col(dur, 10) +
+      result + '\n',
+    );
+  }
+  process.stdout.write('\n');
+}
+
 (async () => {
   ensureDir();
 
@@ -62,6 +110,13 @@ function parseFlags(args) {
   switch (cmd) {
 
     case 'agent': {
+      if (sub === 'install') {
+        const flags = parseFlags(rest);
+        const port  = parseInt(flags.port || process.env.PORT || '4001', 10);
+        require('../src/install').install(port);
+        break;
+      }
+
       const flags = parseFlags([sub, ...rest].filter(Boolean));
       const port  = parseInt(flags.port || process.env.PORT || '4001', 10);
       const host  = flags.host || process.env.HOST || '0.0.0.0';
@@ -86,6 +141,53 @@ function parseFlags(args) {
       } else {
         info('projects file already exists: ' + PROJECTS_FILE);
       }
+      break;
+    }
+
+    case 'add': {
+      if (sub !== 'project') {
+        fatal('usage: floo add project [<name>]');
+      }
+
+      const { ask, askRequired, askList, close } = require('../src/interactive');
+
+      process.stdout.write('\n' + G + 'Add a project\n─────────────\n' + Z);
+
+      const name = rest[0] || await askRequired(W + 'project name: ' + Z);
+
+      const cwd  = await askRequired(W + 'working directory (cwd): ' + Z);
+
+      const envLines = await askList(
+        W + '  KEY=VALUE (empty to finish): ' + Z,
+        G + 'environment variables' + Z + ' (optional, empty to skip):',
+      );
+
+      const steps = await askList(
+        W + '  step (empty to finish): ' + Z,
+        G + 'deploy steps:' + Z,
+      );
+
+      close();
+
+      if (!steps.length) fatal('at least one deploy step is required');
+
+      const config = { cwd, steps };
+      if (envLines.length) {
+        config.env = Object.fromEntries(
+          envLines
+            .map(l => l.split('='))
+            .filter(parts => parts.length >= 2)
+            .map(([k, ...v]) => [k.trim(), v.join('=').trim()]),
+        );
+      }
+
+      addProject(name, config);
+
+      process.stdout.write('\n');
+      ok('project ' + W + name + Z + G + ' added to ' + PROJECTS_FILE + Z);
+      process.stdout.write('\n');
+      info('issue a token:  ' + W + 'floo token issue --project ' + name + Z);
+      process.stdout.write('\n');
       break;
     }
 
@@ -144,6 +246,12 @@ function parseFlags(args) {
         default:
           fatal('unknown subcommand: token ' + (sub || '') + '\n  run: floo help');
       }
+      break;
+    }
+
+    case 'logs': {
+      const entries = history.get(sub || null);
+      printLogs(entries);
       break;
     }
 

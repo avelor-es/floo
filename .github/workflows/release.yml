@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-x64
+            os: ubuntu-latest
+          - target: linux-arm64
+            os: ubuntu-24.04-arm
+          - target: darwin-x64
+            os: macos-15-intel
+          - target: darwin-arm64
+            os: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Bundle into single file
+        run: npx --yes @vercel/ncc build bin/floo.js -o dist/bundle --minify --quiet
+
+      - name: Build SEA blob
+        run: node --experimental-sea-config sea-config.json
+
+      - name: Assemble binary
+        run: node scripts/sea.js
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: dist/bin/floo-${{ matrix.target }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist/bin
+          merge-multiple: true
+
+      - name: Compute SHA256
+        id: sha
+        run: |
+          for f in dist/bin/floo-*; do
+            key=$(basename "$f" | sed 's/floo-//' | tr '-' '_')
+            echo "${key}=$(sha256sum "$f" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          done
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "floo ${{ github.ref_name }}" \
+            --generate-notes \
+            dist/bin/floo-linux-x64 \
+            dist/bin/floo-linux-arm64 \
+            dist/bin/floo-darwin-x64 \
+            dist/bin/floo-darwin-arm64
+
+      - name: Update Homebrew tap
+        continue-on-error: true
+        env:
+          VERSION:         ${{ github.ref_name }}
+          SHA_LINUX_X64:   ${{ steps.sha.outputs.linux_x64 }}
+          SHA_LINUX_ARM64: ${{ steps.sha.outputs.linux_arm64 }}
+          SHA_DARWIN_X64:  ${{ steps.sha.outputs.darwin_x64 }}
+          SHA_DARWIN_ARM64: ${{ steps.sha.outputs.darwin_arm64 }}
+          GH_TOKEN:        ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: node scripts/update-tap.js

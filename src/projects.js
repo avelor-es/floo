@@ -66,4 +66,12 @@ function initFile() {
   }
 }
 
-module.exports = { readProjects, getProject, findProject, initFile, PROJECTS_FILE };
+function addProject(name, config) {
+  let projects = {};
+  try { projects = readProjects(); } catch { /* file may not exist yet */ }
+  projects[name] = config;
+  require('./paths').ensureDir();
+  fs.writeFileSync(PROJECTS_FILE, yaml.dump({ projects }, { lineWidth: -1 }), 'utf8');
+}
+
+module.exports = { readProjects, getProject, findProject, initFile, addProject, PROJECTS_FILE };
